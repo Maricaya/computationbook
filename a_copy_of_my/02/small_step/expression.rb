@@ -85,6 +85,8 @@ p expression = expression.reduce
 # 14
 # 即 Number.new(14) 是我们设计出来的语言 Simple 表达式，而不仅仅是 Ruby 的数字
 
+Object.send(:remove_const, :Machine) # 忘记原来的 Machine类
+
 # 上面手动写太傻了，所以定义一个「虚拟机」
 class Machine < Struct.new(:expression)
   def step
@@ -108,45 +110,8 @@ Machine.new(
   ),
 ).run
 
-# 按照上面的思路很容易实现，减法、除法，布尔值:true、false，布尔运算:and\or\not
-class Boolean < Struct.new(:value)
-  def to_s
-    value.to_s
-  end
-
-  def inspect
-    "«#{self}»"
-  end
-
-  def reducible?
-    false
-  end
-end
-
-class LessThan < Struct.new(:left, :right)
-  def to_s
-    "#{left} < #{right}"
-  end
-
-  def inspect
-    "«#{self}»"
-  end
-
-  def reducible?
-    true
-  end
-
-  def reduce
-    if left.reducible?
-      LessThan.new(left.reduce, right)
-    elsif right.reducible?
-      LessThan.new(left, right.reduce)
-    else
-      Boolean.new(left.value < right.value)
-    end
-  end
-end
-
+# boolean
+# lessThan
 p '--less than run--'
 Machine.new(
   LessThan.new(Number.new(5), Add.new(Number.new(2), Number.new(2)))
