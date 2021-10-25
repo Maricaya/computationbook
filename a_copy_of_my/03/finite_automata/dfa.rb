@@ -83,7 +83,7 @@ class DFADesign < Struct.new(:start_state, :accept_states, :rulebook)
   end
 
   def accepts?(string)
-    # tap 方法对一个代码块求值，然后返回调用它的对象。
+    # tap 方法对一个代码块求值，然后返回调用它的对象
     to_dfa.tap { |dfa| dfa.read_string(string) }.accepting?
   end
 end
@@ -91,6 +91,14 @@ end
 # DFADesign#accepts? 用 DFADesign#to_dfa 方法创建一个 DFA 的新实例，
 # 然后调用 #read_ string? 把它放到一个接受态或者拒绝态里
 dfa_design = DFADesign.new(1, [3], rulebook)
+# 1，'a' -> 2
 p dfa_design.accepts?('a')
+# 1, 'b' -> 1
+# 1, 'a' -> 2
+# 2, 'a' -> 2
 p dfa_design.accepts?('baa')
+# 1, 'b' -> 1
+# 1, 'a' -> 2
+# 2, 'b' -> 3
+# 3, 'a' -> 3
 p dfa_design.accepts?('baba')
